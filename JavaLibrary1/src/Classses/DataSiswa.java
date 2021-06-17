@@ -62,6 +62,7 @@ public class DataSiswa extends javax.swing.JFrame {
         Tambah = new javax.swing.JButton();
         Ubah = new javax.swing.JButton();
         Hapus = new javax.swing.JButton();
+        Simpan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,6 +87,11 @@ public class DataSiswa extends javax.swing.JFrame {
         });
 
         Tambah.setText("Tambah");
+        Tambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TambahActionPerformed(evt);
+            }
+        });
 
         Ubah.setText("Ubah");
         Ubah.addActionListener(new java.awt.event.ActionListener() {
@@ -95,6 +101,18 @@ public class DataSiswa extends javax.swing.JFrame {
         });
 
         Hapus.setText("Hapus");
+        Hapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HapusActionPerformed(evt);
+            }
+        });
+
+        Simpan.setText("Simpan");
+        Simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SimpanActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -108,20 +126,25 @@ public class DataSiswa extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(58, 58, 58)
                         .addComponent(Refresh)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Tambah)
-                .addGap(18, 18, 18)
-                .addComponent(Ubah, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(Hapus)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Tambah)
+                        .addGap(18, 18, 18)
+                        .addComponent(Ubah, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(Hapus))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(190, 190, 190)
+                        .addComponent(Simpan)))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(72, 72, 72)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 268, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(Refresh)
@@ -131,6 +154,8 @@ public class DataSiswa extends javax.swing.JFrame {
                             .addComponent(Ubah)
                             .addComponent(Tambah)
                             .addComponent(Hapus))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Simpan)
                         .addContainerGap())))
         );
 
@@ -144,6 +169,36 @@ public class DataSiswa extends javax.swing.JFrame {
     private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_RefreshActionPerformed
+
+    private void TambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TambahActionPerformed
+        // TODO add your handling code here:
+        ManageData tambahData = new ManageData(this, true);
+        tambahData.setVisible(true);
+    }//GEN-LAST:event_TambahActionPerformed
+
+    private void SimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SimpanActionPerformed
+        // TODO add your handling code here:
+        SimpanData();
+    }//GEN-LAST:event_SimpanActionPerformed
+
+    private void HapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HapusActionPerformed
+        // TODO add your handling code here:
+        String idWhoWantToBeDelete = tbl_siswa.getValueAt(baris, 0).toString*();
+        try {
+            Statement stmt = koneksi.create.Statement();
+            String query = "DELETE FROM t_siswa WHERE nis = '"+idWhoWantToBeDelete+";";
+            int berhasil = stmt.executeUpdate(query);
+            if(berhasil == 1){
+            JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus")
+            dtm.getDataVector().removeAllElements();
+            showData();
+             }else{
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus")
+            }
+        }catch (SQLException ex){
+            ex.pritStackTrace();
+        }
+    }//GEN-LAST:event_HapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,6 +238,7 @@ public class DataSiswa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Hapus;
     private javax.swing.JButton Refresh;
+    private javax.swing.JButton Simpan;
     private javax.swing.JButton Tambah;
     private javax.swing.JButton Ubah;
     private javax.swing.JScrollPane jScrollPane1;
