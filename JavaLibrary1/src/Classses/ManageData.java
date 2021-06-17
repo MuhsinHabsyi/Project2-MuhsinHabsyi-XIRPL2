@@ -9,15 +9,46 @@ package Classses;
  *
  * @author musa
  */
+import Classes.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 public class ManageData extends javax.swing.JFrame {
 
     /**
      * Creates new form ManageData
      */
     Connection koneksi;
-    public ManageData() {
+    String action;
+    public ManageData(java.awt.Frame parent, boolean modal, String act, String nis) {
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "", "db_sekolah");
+        
+        action = act;
+        if (action.equals("edit")){
+            inputNIS.setEnabled(false);
+            showData(nis);
+        }
+    }
+    
+    public void showData(String nis){
+         try{
+            Statement stmt = koneksi.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            String query = "SELECT * FROM t_siswa WHERE nis = '" + nis + "'";
+            System.out.println(query);
+            ResultSet rs = stmt.executeQuery(query);
+            rs.first();
+            System.out.println(rs.first());
+            inputNIS.setText(rs.getString("nis"));
+            inputNAMA.setText(rs.getString("nama"));
+            inputKELAS.setSelectedItem(rs.getString("kelas"));
+            inputJURUSAN.setSelectedItem(rs.getString("jurusan"));
+        } catch(SQLException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi Kesalahan di Query");
+        }
     }
     
     public void insertData(){
@@ -30,6 +61,29 @@ public class ManageData extends javax.swing.JFrame {
             Statement stmt = koneksi.createStatement();
             String query = "INSERT INTO t_siswa(nis, nama, kelas, jurusan) " 
                     + "VALUES('" + nis + "','" + nama + "','" + kelas + "','" + jurusan + "')";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if(berhasil == 1){
+                JOptionPane.showMessageDialog(null, "Data Berhasil Dimasukkan");
+            } else{
+                JOptionPane.showMessageDialog(null, "Data Gagal Dimasukkan");
+            }
+        } catch(SQLException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi Kesalahan pada Database");
+        }
+    }
+     public void EditData(){
+        String nis = inputNIS.getText();
+        String nama = inputNAMA.getText();
+        String kelas = inputKELAS.getSelectedItem().toString();
+        String jurusan = inputJURUSAN.getSelectedItem().toString();
+        
+        try{
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE t_siswa SET nama = '" + nama + "', "
+                    + "kelas = '" + kelas + "', "
+                    + "jurusan = '" + jurusan + "' WHERE nis = '" + nis + "'";
             System.out.println(query);
             int berhasil = stmt.executeUpdate(query);
             if(berhasil == 1){
@@ -58,6 +112,7 @@ public class ManageData extends javax.swing.JFrame {
         inputJURUSAN = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        Simpan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,6 +123,13 @@ public class ManageData extends javax.swing.JFrame {
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
+
+        Simpan.setText("Simpan");
+        Simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SimpanActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,6 +145,10 @@ public class ManageData extends javax.swing.JFrame {
                     .addComponent(inputNAMA, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                     .addComponent(inputJURUSAN, 0, 305, Short.MAX_VALUE))
                 .addContainerGap(345, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Simpan)
+                .addGap(146, 146, 146))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,11 +164,19 @@ public class ManageData extends javax.swing.JFrame {
                         .addComponent(inputKELAS, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(34, 34, 34)
                         .addComponent(inputJURUSAN, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(Simpan)
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void SimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SimpanActionPerformed
+        // TODO add your handling code here:
+        if(action.equals("Edit")) EditData();
+        else SimpanData();
+    }//GEN-LAST:event_SimpanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -132,14 +206,11 @@ public class ManageData extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManageData().setVisible(true);
-            }
-        });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Simpan;
     private javax.swing.JComboBox<String> inputJURUSAN;
     private javax.swing.JComboBox<String> inputKELAS;
     private javax.swing.JTextField inputNAMA;
